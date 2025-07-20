@@ -126,7 +126,7 @@ export const useChat = () => {
               id: pkg.id,
               text: pkg.name,
               value: pkg.id,
-              emoji: pkg.popular ? '⭐' : '📦'
+              emoji: pkg.is_popular ? '⭐' : '📦'
             }));
             sendBotMessage(t.selectPackage, packageOptions);
             setState(prev => ({ ...prev, currentFlow: 'package-selection' }));
