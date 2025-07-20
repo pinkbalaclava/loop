@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageCircle } from 'lucide-react';
+import { Send } from 'lucide-react';
 import { reverseGeocode, getRandomTestCoordinate, isValidCoordinates, TEST_COORDINATES } from './services/geocoding';
 import { 
   createCustomer, 
@@ -673,6 +673,13 @@ function App() {
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg overflow-hidden h-[852px] max-h-[100vh] flex flex-col">
         {/* Chat Header */}
         <div className="bg-whatsapp-primary text-white p-4 flex items-center space-x-3">
+          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center p-1">
+            <img 
+              src="https://static.wixstatic.com/media/1420b0_7ffb91f8f06e47f08a3e2f74031443e8~mv2.png/v1/fill/w_600,h_413,al_c,lg_1,q_85,enc_avif,quality_auto/Loop%20Logo%20no%20backgtround.png" 
+              alt="Loop ISP Logo" 
+              className="w-full h-full object-contain rounded-full"
+            />
+          </div>
           <div>
             <h1 className="font-semibold">Loop ISP</h1>
             <p className="text-sm opacity-90">Online</p>
@@ -726,7 +733,7 @@ function App() {
                 type="submit"
                 className="p-2 bg-whatsapp-light text-white rounded-full hover:bg-whatsapp-secondary transition-colors"
               >
-                <MessageCircle size={18} />
+                <Send size={18} />
               </button>
             </form>
           ) : (
@@ -735,17 +742,10 @@ function App() {
                 <span className="text-gray-500 text-sm">WhatsApp chat simulation</span>
               </div>
               <button className="p-2 bg-whatsapp-light text-white rounded-full hover:bg-whatsapp-secondary transition-colors">
-                <MessageCircle size={18} />
+                <Send size={18} />
               </button>
             </div>
           )}
-          
-          {/* Logo positioned at bottom right */}
-          <img 
-            src="https://static.wixstatic.com/media/1420b0_7ffb91f8f06e47f08a3e2f74031443e8~mv2.png/v1/fill/w_600,h_413,al_c,lg_1,q_85,enc_avif,quality_auto/Loop%20Logo%20no%20backgtround.png" 
-            alt="Loop ISP Logo" 
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 w-10 h-10 object-contain"
-          />
         </div>
       </div>
     </div>
