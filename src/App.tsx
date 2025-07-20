@@ -484,7 +484,7 @@ function App() {
     setCurrentStep('phone');
     
     await showTyping(1000);
-    addMessage(`Thanks ${userData.name}! What's your phone number?`, 'bot');
+    addMessage(`Thanks ${userData.name || 'there'}! What's your phone number?`, 'bot');
   };
 
   const showConsentRequest = async () => {
