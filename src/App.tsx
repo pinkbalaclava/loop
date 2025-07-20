@@ -111,6 +111,7 @@ function App() {
         {
           id: 'basic',
           package_code: 'basic',
+          package_code: 'basic',
           name: 'Farm Connect',
           speed: '10 Mbps',
           price: 15,
@@ -124,6 +125,7 @@ function App() {
         {
           id: 'standard',
           package_code: 'standard',
+          package_code: 'standard',
           name: 'Family Plus',
           speed: '25 Mbps',
           price: 25,
@@ -136,6 +138,7 @@ function App() {
         },
         {
           id: 'premium',
+          package_code: 'premium',
           package_code: 'premium',
           name: 'Business Pro',
           speed: '50 Mbps',

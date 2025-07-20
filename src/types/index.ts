@@ -24,12 +24,16 @@ export interface QuickReplyOption {
 
 export interface Package {
   id: string;
+  package_code: string;
   name: string;
   speed: string;
-  price: string;
+  price: number;
+  price_display: string;
   description: string;
   features: string[];
-  popular?: boolean;
+  is_popular?: boolean;
+  is_active: boolean;
+  sort_order: number;
 }
 
 export interface UserData {
