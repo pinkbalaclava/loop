@@ -64,14 +64,17 @@ type FlowStep = 'welcome' | 'packages' | 'location' | 'provider_selection' | 'na
 
 type LocationStep = 'request' | 'processing' | 'area_confirmation' | 'coverage_check';
 
+type NotifyStep = 'name' | 'phone' | 'complete';
 function App() {
   const [currentStep, setCurrentStep] = useState<FlowStep>('welcome');
   const [locationStep, setLocationStep] = useState<LocationStep>('request');
+  const [notifyStep, setNotifyStep] = useState<NotifyStep>('name');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [userData, setUserData] = useState<UserData>({});
   const [packages, setPackages] = useState<Package[]>([]);
   const [foundCoverageArea, setFoundCoverageArea] = useState<CoverageArea | null>(null);
+  const [isNotifyFlow, setIsNotifyFlow] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const initialMessagesDisplayed = useRef(false);
 
@@ -624,15 +627,21 @@ function App() {
       } else if (value === 'try_gps') {
         handleGPSLocation();
       } else if (value === 'notify_yes' || value === 'notify_no') {
-        await showTyping(1000);
         if (value === 'notify_yes') {
-          addMessage("✅ Thank you! We'll notify you as soon as service becomes available in your area.", 'bot');
+          setIsNotifyFlow(true);
+          setNotifyStep('name');
+          await showTyping(1000);
+          addMessage("Great! I'd like to get your details so we can notify you when we expand to your area.", 'bot');
+          
+          await showTyping(800);
+          addMessage("What's your full name?", 'bot');
         } else {
+          await showTyping(1000);
           addMessage("👍 No problem! Feel free to check back anytime.", 'bot');
+          
+          await showTyping(1000);
+          addMessage("Thanks for your interest in Loop ISP! 🚀", 'bot');
         }
-        
-        await showTyping(1000);
-        addMessage("Thanks for your interest in Loop ISP! 🚀", 'bot');
       }
     } else if (currentStep === 'provider_selection') {
       // Handle service provider selection
@@ -657,7 +666,9 @@ function App() {
   const handleUserInput = (input: string) => {
     addMessage(input, 'user');
     
-    if (currentStep === 'location' && locationStep === 'processing') {
+    if (isNotifyFlow) {
+      handleNotifyFlow(input);
+    } else if (currentStep === 'location' && locationStep === 'processing') {
       processManualLocation(input);
     } else if (currentStep === 'name') {
       setUserData(prev => ({ ...prev, name: input }));
@@ -665,6 +676,78 @@ function App() {
     } else if (currentStep === 'phone') {
       setUserData(prev => ({ ...prev, phone_number: input }));
       showConsentRequest();
+    }
+  };
+
+  const handleNotifyFlow = async (input: string) => {
+    if (notifyStep === 'name') {
+      setUserData(prev => ({ ...prev, name: input }));
+      setNotifyStep('phone');
+      
+      await showTyping(1000);
+      addMessage(`Thanks ${input}! What's your phone number?`, 'bot');
+    } else if (notifyStep === 'phone') {
+      setUserData(prev => ({ ...prev, phone_number: input }));
+      setNotifyStep('complete');
+      
+      await showTyping(1000);
+      addMessage("Perfect! Let me save your details...", 'bot');
+      
+      // Save to Supabase as future customer
+      try {
+        await saveFutureCustomer();
+        
+        await showTyping(1500);
+        addMessage("✅ Thank you! We've saved your details and will notify you as soon as service becomes available in your area.", 'bot');
+        
+        await showTyping(1000);
+        addMessage("You're now on our priority list for future expansion! 🚀", 'bot');
+        
+        // Reset flow
+        setIsNotifyFlow(false);
+        setNotifyStep('name');
+      } catch (error) {
+        console.error('Error saving future customer:', error);
+        await showTyping(1000);
+        addMessage("❌ Sorry, there was an error saving your details. Please try again later.", 'bot');
+      }
+    }
+  };
+
+  const saveFutureCustomer = async () => {
+    const customerData: CustomerData = {
+      name: userData.name || '',
+      phone_number: userData.phone_number || '',
+      preferred_language: userData.preferred_language || 'en',
+      gps_coordinates: userData.gps_coordinates,
+      gps_location: userData.gps_location,
+      manual_location: userData.manual_location,
+      coverage_available: false, // No coverage available
+      status: 'pending', // Future customer status
+      current_journey_stage: 'awareness', // Still in awareness stage
+      consent_given: false, // No service consent yet
+      acquisition_source: 'whatsapp_notify_request',
+      system_input_process: 'bolt'
+    };
+
+    const customer = await createCustomer(customerData);
+    setUserData(prev => ({ ...prev, customer_id: customer.id }));
+    
+    // Log the notify request interaction
+    if (userData.session_id) {
+      await logInteraction({
+        customer_id: customer.id,
+        session_id: userData.session_id,
+        interaction_type: 'coverage_check',
+        message_text: 'Customer requested notification for future coverage expansion',
+        language_used: userData.preferred_language || 'en',
+        metadata: {
+          notify_request: true,
+          location_method: userData.gps_coordinates ? 'gps' : 'manual',
+          coverage_available: false
+        },
+        system_input_process: 'bolt'
+      });
     }
   };
 
@@ -711,7 +794,7 @@ function App() {
 
         {/* Input Area */}
         <div className="border-t border-gray-200 p-4 relative">
-          {(currentStep === 'name' || currentStep === 'phone') ? (
+          {(currentStep === 'name' || currentStep === 'phone' || isNotifyFlow) ? (
             <form onSubmit={(e) => {
               e.preventDefault();
               const input = e.currentTarget.elements.namedItem('userInput') as HTMLInputElement;
@@ -723,7 +806,11 @@ function App() {
               <input
                 name="userInput"
                 type="text"
-                placeholder={currentStep === 'name' ? 'Enter your full name...' : 'Enter your phone number...'}
+                placeholder={
+                  isNotifyFlow 
+                    ? (notifyStep === 'name' ? 'Enter your full name...' : 'Enter your phone number...')
+                    : (currentStep === 'name' ? 'Enter your full name...' : 'Enter your phone number...')
+                }
                 className="flex-1 bg-gray-100 rounded-full px-4 py-2 outline-none focus:bg-white focus:ring-2 focus:ring-whatsapp-light"
                 autoFocus
               />
