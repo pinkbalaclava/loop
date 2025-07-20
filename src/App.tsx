@@ -762,7 +762,7 @@ function App() {
             className="w-16 h-16 object-contain"
           />
           <div>
-            <h1 className="font-semibold">Loop ISP</h1>
+            <h1 className="font-semibold text-lg">The Loop Team</h1>
             <p className="text-sm opacity-90">Online</p>
           </div>
         </div>
