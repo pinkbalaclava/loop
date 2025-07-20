@@ -598,12 +598,40 @@ function App() {
     
     await showTyping(800);
     addMessage("Welcome to the Loop ISP family! 🚀", 'bot');
+    
+    await showTyping(1000);
+    addMessage("Need to start over or help someone else?", 'bot', [
+      { id: 'start_again', text: '🔄 Start Again', value: 'start_again', emoji: '🔄' }
+    ]);
+  };
+
+  const resetChat = () => {
+    setCurrentStep('welcome');
+    setLocationStep('request');
+    setNotifyStep('name');
+    setMessages([]);
+    setIsTyping(false);
+    setUserData({});
+    setFoundCoverageArea(null);
+    setIsNotifyFlow(false);
+    
+    // Generate new session ID
+    const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    setUserData(prev => ({ ...prev, session_id: sessionId }));
+    
+    // Start welcome flow again
+    setTimeout(() => {
+      showWelcomeMessage();
+    }, 500);
   };
 
   const handleQuickReply = async (text: string, value: string) => {
     addMessage(text, 'user');
     
-    if (currentStep === 'welcome' && value === 'start') {
+    if (value === 'start_again') {
+      resetChat();
+      return;
+    } else if (currentStep === 'welcome' && value === 'start') {
       setUserData(prev => ({ ...prev, preferred_language: 'en' }));
       showPackageSelection();
     } else if (currentStep === 'welcome' && packages.length > 0 && packages.some(pkg => pkg.id === value)) {
@@ -641,6 +669,11 @@ function App() {
           
           await showTyping(1000);
           addMessage("Thanks for your interest in Loop ISP! 🚀", 'bot');
+          
+          await showTyping(1000);
+          addMessage("Would you like to start over?", 'bot', [
+            { id: 'start_again', text: '🔄 Start Again', value: 'start_again', emoji: '🔄' }
+          ]);
         }
       }
     } else if (currentStep === 'provider_selection') {
@@ -703,7 +736,11 @@ function App() {
         await showTyping(1000);
         addMessage("You're now on our priority list for future expansion! 🚀", 'bot');
         
-        // Reset flow
+        await showTyping(1000);
+        addMessage("Would you like to start over or help someone else?", 'bot', [
+          { id: 'start_again', text: '🔄 Start Again', value: 'start_again', emoji: '🔄' }
+        ]);
+        
         setIsNotifyFlow(false);
         setNotifyStep('name');
       } catch (error) {
