@@ -759,7 +759,7 @@ function App() {
           <img 
             src="https://static.wixstatic.com/media/1420b0_7ffb91f8f06e47f08a3e2f74031443e8~mv2.png/v1/fill/w_600,h_413,al_c,lg_1,q_85,enc_avif,quality_auto/Loop%20Logo%20no%20backgtround.png" 
             alt="Loop ISP Logo" 
-            className="w-10 h-10 object-contain"
+            className="w-16 h-16 object-contain"
           />
           <div>
             <h1 className="font-semibold">Loop ISP</h1>
