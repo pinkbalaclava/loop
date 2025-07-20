@@ -1,0 +1,89 @@
+Table Name,Field Name,Data Type,Primary Key,Foreign Key,Nullable,Default Value,Description
+packages,id,uuid,Yes,,No,uuid_generate_v4(),Unique identifier for each internet package
+packages,package_code,text,No,,No,,Unique code for the package (e.g. 'basic' 'standard' 'premium')
+packages,name,text,No,,No,,Display name of the package (e.g. 'Farm Connect' 'Family Plus')
+packages,speed,text,No,,No,,Internet speed description (e.g. '10 Mbps' '25 Mbps')
+packages,price_per_day,numeric(10,2),No,,No,,Daily price in South African Rand
+packages,price_display,text,No,,No,,Formatted price for display (e.g. 'R15/day')
+packages,description,text,No,,No,,Brief description of the package target audience
+packages,features,jsonb,No,,No,'[]',JSON array of package features and benefits
+packages,is_popular,boolean,No,,Yes,false,Flag to mark the most popular package for highlighting
+packages,is_active,boolean,No,,Yes,true,Flag to enable/disable package availability
+packages,sort_order,integer,No,,Yes,0,Display order for package listing
+packages,system_input_process,text,No,,Yes,'bolt',System identifier for tracking data source
+packages,created_at,timestamptz,No,,Yes,now(),Timestamp when record was created
+packages,updated_at,timestamptz,No,,Yes,now(),Timestamp when record was last updated
+
+coverage_areas,id,uuid,Yes,,No,uuid_generate_v4(),Unique identifier for each coverage area
+coverage_areas,area_name,text,No,,No,,Name of the coverage area (e.g. 'Johannesburg Metro')
+coverage_areas,area_type,text,No,,Yes,'general',Type of area (city/town/farm/rural/general)
+coverage_areas,coordinates,jsonb,No,,Yes,,JSON coordinates for polygon or point mapping
+coverage_areas,center_lat,numeric(10,8),No,,Yes,,Latitude of area center point
+coverage_areas,center_lng,numeric(11,8),No,,Yes,,Longitude of area center point
+coverage_areas,radius_km,numeric(8,2),No,,Yes,,Coverage radius in kilometers from center point
+coverage_areas,is_active,boolean,No,,Yes,true,Flag to enable/disable coverage area
+coverage_areas,coverage_quality,text,No,,Yes,'good',Quality rating (excellent/good/fair/poor)
+coverage_areas,notes,text,No,,Yes,,Additional notes about the coverage area
+coverage_areas,system_input_process,text,No,,Yes,'bolt',System identifier for tracking data source
+coverage_areas,created_at,timestamptz,No,,Yes,now(),Timestamp when record was created
+coverage_areas,updated_at,timestamptz,No,,Yes,now(),Timestamp when record was last updated
+
+customers,id,uuid,Yes,,No,uuid_generate_v4(),Unique identifier for each customer
+customers,name,text,No,,No,,Customer's full name as provided during onboarding
+customers,phone_number,text,No,,No,,Customer's phone number for contact and WhatsApp
+customers,preferred_language,language_code,No,,No,'en',Customer's preferred language (en/af/zu)
+customers,gps_coordinates,text,No,,Yes,,GPS coordinates if customer shared location
+customers,manual_location,text,No,,Yes,,Manually entered location description
+customers,coverage_available,boolean,No,,Yes,false,Whether coverage is available at customer location
+customers,coverage_area_id,uuid,No,coverage_areas(id),Yes,,Reference to the coverage area customer is in
+customers,status,customer_status,No,,Yes,'pending',Customer account status
+customers,current_journey_stage,journey_stage,No,,Yes,'awareness',Current stage in customer journey
+customers,selected_package_id,uuid,No,packages(id),Yes,,Reference to customer's selected package
+customers,selected_package_code,text,No,,Yes,,Backup package code in case package is deleted
+customers,consent_given,boolean,No,,Yes,false,Whether customer gave consent for data processing
+customers,consent_timestamp,timestamptz,No,,Yes,,When consent was given
+customers,first_contact_date,timestamptz,No,,Yes,now(),Date of first interaction with customer
+customers,last_interaction_date,timestamptz,No,,Yes,now(),Date of most recent interaction
+customers,conversion_date,timestamptz,No,,Yes,,Date customer became active subscriber
+customers,churn_date,timestamptz,No,,Yes,,Date customer cancelled service
+customers,churn_reason,text,No,,Yes,,Reason for customer churn
+customers,lifetime_value,numeric(12,2),No,,Yes,0,Total revenue generated from customer
+customers,acquisition_source,text,No,,Yes,'whatsapp_onboarding',How customer was acquired
+customers,referral_code,text,No,,Yes,,Referral code if customer was referred
+customers,notes,text,No,,Yes,,Additional notes about the customer
+customers,system_input_process,text,No,,Yes,'bolt',System identifier for tracking data source
+customers,created_at,timestamptz,No,,Yes,now(),Timestamp when record was created
+customers,updated_at,timestamptz,No,,Yes,now(),Timestamp when record was last updated
+
+customer_interactions,id,uuid,Yes,,No,uuid_generate_v4(),Unique identifier for each interaction
+customer_interactions,customer_id,uuid,No,customers(id),Yes,,Reference to the customer who interacted
+customer_interactions,session_id,text,No,,Yes,,Session identifier to group related interactions
+customer_interactions,interaction_type,interaction_type,No,,No,,Type of interaction (message/quick_reply/etc)
+customer_interactions,message_text,text,No,,Yes,,Text of customer's message if applicable
+customer_interactions,bot_response,text,No,,Yes,,Bot's response to the customer
+customer_interactions,quick_reply_selected,text,No,,Yes,,Quick reply button selected by customer
+customer_interactions,metadata,jsonb,No,,Yes,'{}',Additional data about the interaction
+customer_interactions,language_used,language_code,No,,Yes,,Language used during the interaction
+customer_interactions,timestamp,timestamptz,No,,Yes,now(),When the interaction occurred
+customer_interactions,system_input_process,text,No,,Yes,'bolt',System identifier for tracking data source
+customer_interactions,created_at,timestamptz,No,,Yes,now(),Timestamp when record was created
+
+customer_journey_events,id,uuid,Yes,,No,uuid_generate_v4(),Unique identifier for each journey event
+customer_journey_events,customer_id,uuid,No,customers(id),Yes,,Reference to the customer
+customer_journey_events,from_stage,journey_stage,No,,Yes,,Previous journey stage (can be null for first event)
+customer_journey_events,to_stage,journey_stage,No,,No,,New journey stage customer moved to
+customer_journey_events,event_trigger,text,No,,Yes,,What caused the stage change
+customer_journey_events,event_data,jsonb,No,,Yes,'{}',Additional data about the journey event
+customer_journey_events,timestamp,timestamptz,No,,Yes,now(),When the journey stage change occurred
+customer_journey_events,system_input_process,text,No,,Yes,'bolt',System identifier for tracking data source
+customer_journey_events,created_at,timestamptz,No,,Yes,now(),Timestamp when record was created
+
+customer_package_selections,id,uuid,Yes,,No,uuid_generate_v4(),Unique identifier for each package selection
+customer_package_selections,customer_id,uuid,No,customers(id),Yes,,Reference to the customer
+customer_package_selections,package_id,uuid,No,packages(id),Yes,,Reference to the selected package
+customer_package_selections,package_code,text,No,,No,,Package code for backup reference
+customer_package_selections,selection_timestamp,timestamptz,No,,Yes,now(),When the package was selected
+customer_package_selections,is_final_selection,boolean,No,,Yes,false,Whether this is the final confirmed selection
+customer_package_selections,selection_context,text,No,,Yes,,Context of selection (initial/upgrade/downgrade/change)
+customer_package_selections,system_input_process,text,No,,Yes,'bolt',System identifier for tracking data source
+customer_package_selections,created_at,timestamptz,No,,Yes,now(),Timestamp when record was created
