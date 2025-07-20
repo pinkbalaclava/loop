@@ -752,10 +752,10 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 md:p-4 p-0">
-      <div className="w-full max-w-md md:max-w-md w-full bg-white rounded-lg md:rounded-lg rounded-none shadow-lg overflow-hidden h-[852px] md:h-[852px] h-screen max-h-[100vh] flex flex-col">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center md:p-4">
+      <div className="w-full max-w-md bg-white md:rounded-lg shadow-lg overflow-hidden md:h-[852px] h-screen max-h-[100vh] flex flex-col">
         {/* Chat Header */}
-        <div className="bg-gradient-to-br from-[#2218BD] to-[#83E59F] text-white p-6 md:p-6 p-4 flex items-center space-x-3 rounded-t-lg md:rounded-t-lg rounded-t-none">
+        <div className="bg-gradient-to-br from-[#2218BD] to-[#83E59F] text-white md:p-6 p-4 flex items-center space-x-3 md:rounded-t-lg">
           <img 
             src="https://static.wixstatic.com/media/1420b0_7ffb91f8f06e47f08a3e2f74031443e8~mv2.png/v1/fill/w_600,h_413,al_c,lg_1,q_85,enc_avif,quality_auto/Loop%20Logo%20no%20backgtround.png" 
             alt="Loop ISP Logo" 
