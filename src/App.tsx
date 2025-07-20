@@ -600,8 +600,8 @@ function App() {
     addMessage("Welcome to the Loop ISP family! 🚀", 'bot');
     
     await showTyping(1000);
-    addMessage("Need to start over or help someone else?", 'bot', [
-      { id: 'start_again', text: '🔄 Start Again', value: 'start_again', emoji: '🔄' }
+    addMessage("", 'bot', [
+      { id: 'start_again', text: 'Start over if needed', value: 'start_again', emoji: '🔄' }
     ]);
   };
 
@@ -668,11 +668,8 @@ function App() {
           addMessage("👍 No problem! Feel free to check back anytime.", 'bot');
           
           await showTyping(1000);
-          addMessage("Thanks for your interest in Loop ISP! 🚀", 'bot');
-          
-          await showTyping(1000);
-          addMessage("Would you like to start over?", 'bot', [
-            { id: 'start_again', text: '🔄 Start Again', value: 'start_again', emoji: '🔄' }
+          addMessage("Thanks for your interest in Loop ISP! 🚀", 'bot', [
+            { id: 'start_again', text: 'Start over if needed', value: 'start_again', emoji: '🔄' }
           ]);
         }
       }
