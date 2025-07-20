@@ -60,7 +60,11 @@ body {
 @media (max-width: 768px) {
   .max-w-md {
     max-width: 100%;
-    height: 100vh;
+    height: 100vh !important;
     border-radius: 0;
+  }
+  
+  .h-\[852px\] {
+    height: 100vh !important;
   }
 }
